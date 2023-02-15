@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Button from "../Button";
+import { ToastContext } from "../ToastProvider/ToastProvider";
 import ToastShelf from "../ToastShelf/ToastShelf";
 
 import styles from "./ToastPlayground.module.css";
@@ -8,43 +9,9 @@ import styles from "./ToastPlayground.module.css";
 const VARIANT_OPTIONS = ["notice", "warning", "success", "error"];
 
 function ToastPlayground() {
+  const {handleCreateToast} = useContext(ToastContext)
   const [message, setMessage] = useState("Welcome!");
   const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]);
-  const [toasts, setToasts] = useState([]);
-
-  function handleMessageChange(e) {
-    setMessage(e.target.value);
-  }
-
-  function handleVariantChange(e) {
-    setVariant(e.target.value);
-  }
-
-  function handleDismiss(id) {
-    const nextToasts = toasts.filter((toast) => {
-      return toast.id !== id;
-    });
-
-    setToasts(nextToasts);
-  }
-
-  function handleCreateToast(event) {
-    event.preventDefault();
-
-    const nextToasts = [
-      ...toasts,
-      {
-        id: crypto.randomUUID(),
-        message,
-        variant,
-      },
-    ];
-
-    setToasts(nextToasts);
-
-    setMessage('');
-    setVariant(VARIANT_OPTIONS[0]);
-  }
 
   return (
     <div className={styles.wrapper}>
@@ -52,12 +19,16 @@ function ToastPlayground() {
         <img alt="Cute toast mascot" src="/toast.png" />
         <h1>Toast Playground</h1>
       </header>
-      <ToastShelf
-        toasts={toasts}
-        handleDismiss={handleDismiss}
-      />
 
-      <form className={styles.controlsWrapper} onSubmit={handleCreateToast}>
+      <ToastShelf/>
+
+      <form className={styles.controlsWrapper} onSubmit={(e) => {
+        handleCreateToast(e , message, variant)
+
+        setMessage('');
+        setVariant(VARIANT_OPTIONS[0]);
+
+      }}>
         <div className={styles.row}>
           <label
             htmlFor="message"
@@ -70,7 +41,7 @@ function ToastPlayground() {
             <textarea
               id="message"
               value={message}
-              onChange={handleMessageChange}
+              onChange={(e) => setMessage(e.target.value)}
               className={styles.messageInput}
             />
           </div>
@@ -89,7 +60,7 @@ function ToastPlayground() {
                     name="variant"
                     checked={variant === option}
                     value={option}
-                    onChange={handleVariantChange}
+                    onChange={(e) => setVariant(e.target.value)}
                   />
                   {option}
                 </label>
