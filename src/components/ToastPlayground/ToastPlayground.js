@@ -20,12 +20,12 @@ function ToastPlayground() {
     setVariant(e.target.value);
   }
 
-  function removeToast(id) {
+  function handleDismiss(id) {
     const filtered = toasts.filter((t) => t.id !== id);
     setToasts(filtered);
   }
 
-  function handleSubmit() {
+  function handleCreateToast() {
     const newToast = {
       id: crypto.randomUUID(),
       variant,
@@ -43,10 +43,12 @@ function ToastPlayground() {
         <img alt="Cute toast mascot" src="/toast.png" />
         <h1>Toast Playground</h1>
       </header>
+      <ToastShelf
+        toasts={toasts}
+        handleDismiss={handleDismiss}
+      />
 
-      <ToastShelf removeToast={removeToast}>{toasts}</ToastShelf>
-
-      <div className={styles.controlsWrapper}>
+      <form className={styles.controlsWrapper} onSubmit={handleCreateToast}>
         <div className={styles.row}>
           <label
             htmlFor="message"
@@ -90,13 +92,12 @@ function ToastPlayground() {
         <div className={styles.row}>
           <div className={styles.label} />
           <div
-            onClick={handleSubmit}
             className={`${styles.inputWrapper} ${styles.radioWrapper}`}
           >
             <Button>Pop Toast!</Button>
           </div>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
