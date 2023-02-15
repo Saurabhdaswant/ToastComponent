@@ -21,20 +21,29 @@ function ToastPlayground() {
   }
 
   function handleDismiss(id) {
-    const filtered = toasts.filter((t) => t.id !== id);
-    setToasts(filtered);
+    const nextToasts = toasts.filter((toast) => {
+      return toast.id !== id;
+    });
+
+    setToasts(nextToasts);
   }
 
-  function handleCreateToast() {
-    const newToast = {
-      id: crypto.randomUUID(),
-      variant,
-      message,
-    };
+  function handleCreateToast(event) {
+    event.preventDefault();
 
-    setToasts((prev) => {
-      return [...prev, newToast];
-    });
+    const nextToasts = [
+      ...toasts,
+      {
+        id: crypto.randomUUID(),
+        message,
+        variant,
+      },
+    ];
+
+    setToasts(nextToasts);
+
+    setMessage('');
+    setVariant(VARIANT_OPTIONS[0]);
   }
 
   return (
